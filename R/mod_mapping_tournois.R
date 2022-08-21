@@ -10,26 +10,27 @@
 mod_mapping_tournois_ui <- function(id){
   ns <- NS(id)
   tagList(
-    leafletOutput(ns("map"), height = "900px")
+    leafletOutput(ns("map"), height="700px")
   )
 }
 
 #' mapping_tournois Server Functions
 #'
 #' @noRd
-mod_mapping_tournois_server <- function(id){
+mod_mapping_tournois_server <- function(id, r_global){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
     output$map <- renderLeaflet({
-      leaflet(tournament_atp_final_df) %>%
+      leaflet(r_global$dataset()) %>%
         addProviderTiles(providers$Esri.WorldTopoMap) %>%
         addMarkers(~lon, ~lat,
-                   icon = flagIcon,
+                   icon = makeIcon(iconUrl = ~icon_categorie,iconWidth = 40, iconHeight = 25, shadowWidth = 10, shadowHeight = 10),
                    label = ~label_text,
                    labelOptions = labelOptions(textsize = "12px"),
                    popup = ~popup_text)
     })
+
   })
 }
 
