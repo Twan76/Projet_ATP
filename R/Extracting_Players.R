@@ -10,6 +10,7 @@ library(purrr)
 library(ggmap)
 library(readr)
 
+wiki_URL_ATP_World_Tour <- "https://www.atptour.com/en/tournaments"
 #  Generalisons
 noeuds <- read_html(wiki_URL_ATP_World_Tour) %>% html_nodes(xpath = '//*[@class="tourney-results-wrapper"]')
 
@@ -70,15 +71,14 @@ player_links <- player_links[seq(1,length(player_links),3)]
 tournament_atp <- tournament_atp %>% #Take the players data frame
   mutate(player_links = player_links)
 
-#Now grabbing the images in the infobox
-player_image <- function (x) { #Creating a function that will...
-  read_html(paste0("https://www.atptour.com",x)) %>%
-    html_node(xpath = '//*[@id="playerProfileHero"]') %>%
-    html_node("img") %>%
-    html_attr("src") #Grab its URL location
-}
-
-tournament_atp <- mutate(tournament_atp, image = map(player_links, player_image)) #Apply the function created above for each player
+#Now grabbing the image in the infobox
+# player_image <- function (x) { #Creating a function that will...
+#   read_html(paste0("https://www.atptour.com",x)) %>%
+#     html_node(xpath = '//*[@id="playerProfileHero"]') %>%
+#     html_node("img") %>%
+#     html_attr("src") #Grab its URL location
+# }
+# tournament_atp <- mutate(tournament_atp, image = map(player_links, player_image)) #Apply the function created above for each player
 
 player_info <- function(x) { #Creating a function grabbing players' info that would be applied to every player.
   player_info <- read_html(paste0("https://www.atptour.com",x)) %>%
@@ -128,10 +128,100 @@ tournament_atp[select_atp_500,8] <- "ATP 500"
 tournament_atp[select_atp_1000,8] <- "Masters 1000"
 tournament_atp[select_atp_grand_chelem,8] <- "Grand Chelem"
 
-tournament_atp <- mutate(tournament_atp,
+return(tournament_atp)
+}
+
+tournament_atp_final <- rbind(tournament_atp(1), tournament_atp(2), tournament_atp(3), tournament_atp(4), tournament_atp(5), tournament_atp(6), tournament_atp(7))
+
+tournament_atp_final$icon_tournoi <- vector(length=length(tournament_atp_final$Tournoi))
+
+for(i in 1:length(tournament_atp_final$Tournoi)){
+  if(tournament_atp_final$Tournoi[i] == "Abierto Mexicano Telcel presentado por HSBC") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/acapulco.png"}
+  else if(tournament_atp_final$Tournoi[i] == "ABN AMRO Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/rotterdam.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Adelaide International 1") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/adelaide.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Adelaide International 2") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/adelaide.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Argentina Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/buenos_aires.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Atlanta Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/atlanta.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Australian Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/australian_open.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Barcelona Open Banc Sabadell") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/barcelone.png"}
+  else if(tournament_atp_final$Tournoi[i] == "BMW Open by American Express") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/munich.png"}
+  else if(tournament_atp_final$Tournoi[i] == "BNP Paribas Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/indian_wells.png"}
+  else if(tournament_atp_final$Tournoi[i] == "BOSS OPEN") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/stuttgart.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Chile Dove Men+Care Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/santiago.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Cinch Championships") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/london.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Cordoba Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/cordoba.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Dallas Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/dallas.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Delray Beach Open by VITACOST.com") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/delray_beach.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Dubai Duty Free Tennis Championships") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/dubai.png"}
+  else if(tournament_atp_final$Tournoi[i] == "EFG Swiss Open Gstaad") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/gstaad.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Fayez Sarofim & Co. U.S. Men's Clay Court Championship") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/houston.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Generali Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/kitzbuhel.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Gonet Geneva Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/geneve.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Grand Prix Hassan II") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/marrakech.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Hamburg European Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/hamburg.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Infosys Hall of Fame Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/newport.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Internazionali BNL d'Italia") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/rome.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Libema Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/hertogenbosch.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Mallorca Championships") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/mallorca.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Melbourne Summer Set") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/melbourne.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Miami Open presented by Itau") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/miami.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Millennium Estoril Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/estoril.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Mutua Madrid Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/madrid.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Nordea Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/bastad.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Open 13 Provence") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/marseille.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Open Parc Auvergne-Rhone-Alpes Lyon") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/lyon.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Open Sud de France – Montpellier") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/montpellier.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Plava Laguna Croatia Open Umag") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/umag.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Qatar ExxonMobil Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/doha.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Rio Open presented by Claro") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/rio.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Roland Garros") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/roland_garros.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Rolex Monte-Carlo Masters") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/monte_carlo.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Rothesay International") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/eastbourne.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Serbia Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/belgrade.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Sydney Tennis Classic") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/sydney.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Tata Open Maharashtra") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/pune.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Terra Wortmann Open") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/halle.png"}
+  else if(tournament_atp_final$Tournoi[i] == "Wimbledon") { tournament_atp_final$icon_tournoi[i] <- "www/tournaments/wimbledon.png"}
+}
+
+tournament_atp_final$icon_joueur <- vector(length=length(tournament_atp_final$Vainqueur))
+
+for(i in 1:length(tournament_atp_final$Vainqueur)){
+      if(tournament_atp_final$Vainqueur[i] == "Rafael Nadal") { tournament_atp_final$icon_joueur[i] <- "www/players/nadal.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Aslan Karatsev") { tournament_atp_final$icon_joueur[i] <- "www/players/karatsev.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Thanasi Kokkinakis") { tournament_atp_final$icon_joueur[i] <- "www/players/kokkinakis.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Joao Sousa") { tournament_atp_final$icon_joueur[i] <- "www/players/sousa.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Gael Monfils") { tournament_atp_final$icon_joueur[i] <- "www/players/monfils.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Albert Ramos-Vinolas") { tournament_atp_final$icon_joueur[i] <- "www/players/ramos-vinolas.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Alexander Bublik") { tournament_atp_final$icon_joueur[i] <- "www/players/bublik.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Carlos Alcaraz") { tournament_atp_final$icon_joueur[i] <- "www/players/alcaraz.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Felix Auger-Aliassime") { tournament_atp_final$icon_joueur[i] <- "www/players/auger-aliassime.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Sebastian Baez") { tournament_atp_final$icon_joueur[i] <- "www/players/baez.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Roberto Bautista Agut") { tournament_atp_final$icon_joueur[i] <- "www/players/bautista-agut.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Matteo Berrettini") { tournament_atp_final$icon_joueur[i] <- "www/players/berrettini.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Francisco Cerundolo") { tournament_atp_final$icon_joueur[i] <- "www/players/cerundolo.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Maxime Cressy") { tournament_atp_final$icon_joueur[i] <- "www/players/cressy.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Alex de Minaur") { tournament_atp_final$icon_joueur[i] <- "www/players/de_minaur.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Novak Djokovic") { tournament_atp_final$icon_joueur[i] <- "www/players/djokovic.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Taylor Fritz") { tournament_atp_final$icon_joueur[i] <- "www/players/fritz.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "David Goffin") { tournament_atp_final$icon_joueur[i] <- "www/players/goffin.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Hubert Hurkacz") { tournament_atp_final$icon_joueur[i] <- "www/players/hurkacz.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Pedro Martinez") { tournament_atp_final$icon_joueur[i] <- "www/players/martinez.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Lorenzo Musetti") { tournament_atp_final$icon_joueur[i] <- "www/players/musetti.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Cameron Norrie") { tournament_atp_final$icon_joueur[i] <- "www/players/norrie.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Reilly Opelka") { tournament_atp_final$icon_joueur[i] <- "www/players/opelka.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Andrey Rublev") { tournament_atp_final$icon_joueur[i] <- "www/players/rublev.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Holger Rune") { tournament_atp_final$icon_joueur[i] <- "www/players/rune.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Casper Ruud") { tournament_atp_final$icon_joueur[i] <- "www/players/ruud.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Jannik Sinner") { tournament_atp_final$icon_joueur[i] <- "www/players/sinner.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Stefanos Tsitsipas") { tournament_atp_final$icon_joueur[i] <- "www/players/tsitsipas.png"}
+      else if(tournament_atp_final$Vainqueur[i] == "Tim Van Rijhtoven") { tournament_atp_final$icon_joueur[i] <- "www/players/van_rijthoven.png"}
+}
+
+tournament_atp_final <- mutate(tournament_atp_final,
                          links = paste0("https://www.atptour.com", player_links), #Bringing in player links
                          popup_text = paste0("<center>", #Setting up poopup info
-                                             # ifelse(!is.na(image), paste0("<img src = https:", image, " width='100'>"), ""),
+                                             ifelse(!is.na(icon_joueur), paste0("<img src='",icon_joueur,"' width='100'>"), ""),
                                              "</br><b>Vainqueur : </b> ", Vainqueur,
                                              "</br><b>Age : </b> ", Age,
                                              "</br><b>Naissance : </b> ", BirthPlace,
@@ -142,16 +232,13 @@ tournament_atp <- mutate(tournament_atp,
                                              "</br><b>Pro depuis :</b> ", TurnedPro,
                                              "</br><a href='", links, "' target='_blank'>More info...</a></center>"))
 
-tournament_atp <- mutate(tournament_atp,
+tournament_atp_final <- mutate(tournament_atp_final,
                          label_text = paste0("<center>", #Setting up poopup info
-                                             " <b>Tournoi : </b> ", tournament_atp$Tournoi,",", tournament_atp$Ville,",", tournament_atp$Pays,
-                                             "</br><b>Surface : </b> ", tournament_atp$Surface,
-                                             "</br><b> Date : </b> ", "Du ", format(tournament_atp$Debut,"%d/%m/%Y"), " au ", format(tournament_atp$Fin, "%d/%m/%Y"),
-                                             "</br><b>Catégorie :</b> ", tournament_atp$Categorie, "</center>") %>% lapply(htmltools::HTML))
-return(tournament_atp)
-}
-
-tournament_atp_final <- rbind(tournament_atp(1), tournament_atp(2), tournament_atp(3), tournament_atp(4), tournament_atp(5), tournament_atp(6), tournament_atp(7))
+                                             " <b>Tournoi : </b> ", Tournoi,",", Ville,",", Pays,
+                                             "</br><b>Surface : </b> ", Surface,
+                                             "</br><b> Date : </b> ", "Du ", format(Debut,"%d/%m/%Y"), " au ", format(Fin, "%d/%m/%Y"),
+                                             "</br><b>Catégorie :</b> ", Categorie,
+                                             "</br>", ifelse(!is.na(icon_joueur), paste0("<img src='",icon_tournoi,"' width='100'>"), ""),"</center>") %>% lapply(htmltools::HTML))
 
 #Saving for the app
 write_rds(tournament_atp_final, "tournament_atp_final.rds")
