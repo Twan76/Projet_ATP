@@ -25,7 +25,7 @@ mod_mapping_tournois_server <- function(id, r_global){
       leaflet(r_global$dataset()) %>%
         addProviderTiles(providers$Esri.WorldTopoMap) %>%
         addMarkers(~lon, ~lat,
-                   icon = makeIcon(iconUrl = ~icon_categorie,iconWidth = 40, iconHeight = 25, shadowWidth = 10, shadowHeight = 10),
+                   icon = makeIcon(iconUrl = ~icon_categorie, iconWidth = 40, iconHeight = 25, shadowWidth = 10, shadowHeight = 10),
                    label = ~label_text,
                    labelOptions = labelOptions(textsize = "12px"),
                    popup = ~popup_text)
