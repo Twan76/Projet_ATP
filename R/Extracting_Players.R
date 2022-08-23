@@ -223,6 +223,28 @@ tournament_atp_challenger_final <- rbind(tournament_atp_challenger(1), tournamen
 
 tournament_atp_final <- rbind(tournament_atp_final,tournament_atp_challenger_final)
 
+# Renommer les surfaces
+select_atp_outdoor_hard <- (tournament_atp_final$Surface == "Outdoor, Hard")
+select_atp_outdoor_clay <- (tournament_atp_final$Surface == "Outdoor, Clay")
+select_atp_outdoor_grass <- (tournament_atp_final$Surface == "Outdoor, Grass")
+select_atp_indoor_hard <- (tournament_atp_final$Surface == "Indoor, Hard")
+select_atp_indoor_clay <- (tournament_atp_final$Surface == "Indoor, Clay")
+tournament_atp_final[select_atp_outdoor_hard,6] <- "Dur ext."
+tournament_atp_final[select_atp_outdoor_clay,6] <- "TB ext."
+tournament_atp_final[select_atp_outdoor_grass,6] <- "Gazon"
+tournament_atp_final[select_atp_indoor_hard,6] <- "Dur int."
+tournament_atp_final[select_atp_indoor_clay,6] <- "TB int."
+
+# Renommer les types de jeu
+select_atp_droitier_rev2m <- (tournament_atp_final$Play == "Right-Handed, Two-Handed Backhand")
+select_atp_droitier_rev1m <- (tournament_atp_final$Play == "Right-Handed, One-Handed Backhand")
+select_atp_gaucher_rev2m <- (tournament_atp_final$Play == "Left-Handed, Two-Handed Backhand")
+select_atp_gaucher_rev1m <- (tournament_atp_final$Play == "Left-Handed, One-Handed Backhand")
+tournament_atp_final[select_atp_droitier_rev2m,13] <- "Droitier, revers à 2 mains"
+tournament_atp_final[select_atp_droitier_rev1m,13] <- "Droitier, revers à 1 main"
+tournament_atp_final[select_atp_gaucher_rev2m,13] <- "Gaucher, revers à 2 mains"
+tournament_atp_final[select_atp_gaucher_rev1m,13] <- "Gaucher, revers à 1 main"
+
 icon_tournoi = case_when(
   tournament_atp_final$Tournoi == "Abierto Mexicano Telcel presentado por HSBC" ~ "www/tournaments/acapulco.png",
    tournament_atp_final$Tournoi == "ABN AMRO Open" ~ "www/tournaments/rotterdam.png",
@@ -431,18 +453,6 @@ tournament_atp_final <- mutate(tournament_atp_final,
                                              "</br><b> Date : </b> ", "Du ", format(Debut,"%d/%m/%Y"), " au ", format(Fin, "%d/%m/%Y"),
                                              "</br><b>Catégorie :</b> ", Categorie,
                                              "</br>", ifelse(!is.na(icon_tournoi), paste0("<img src='",icon_tournoi,"' width='100'>"), ""),"</center>") %>% lapply(htmltools::HTML))
-
-# Renommer les surfaces
-select_atp_outdoor_hard <- (tournament_atp_final$Surface == "Outdoor, Hard")
-select_atp_outdoor_clay <- (tournament_atp_final$Surface == "Outdoor, Clay")
-select_atp_outdoor_grass <- (tournament_atp_final$Surface == "Outdoor, Grass")
-select_atp_indoor_hard <- (tournament_atp_final$Surface == "Indoor, Hard")
-select_atp_indoor_clay <- (tournament_atp_final$Surface == "Indoor, Clay")
-tournament_atp_final[select_atp_outdoor_hard,6] <- "Dur extérieur"
-tournament_atp_final[select_atp_outdoor_clay,6] <- "Terre battue extérieur"
-tournament_atp_final[select_atp_outdoor_grass,6] <- "Gazon extérieur"
-tournament_atp_final[select_atp_indoor_hard,6] <- "Dur intérieur"
-tournament_atp_final[select_atp_indoor_clay,6] <- "Terre battue intérieur"
 
 #Saving for the app
 write_rds(tournament_atp_final, "tournament_atp_final.rds")

@@ -22,6 +22,9 @@ mod_mapping_tournois_server <- function(id, r_global){
     ns <- session$ns
 
     output$map <- renderLeaflet({
+      if(nrow(r_global$dataset())==0){
+              leaflet() %>%  addProviderTiles(providers$Esri.WorldTopoMap)
+      } else {
       leaflet(r_global$dataset()) %>%
         addProviderTiles(providers$Esri.WorldTopoMap) %>%
         addMarkers(~lon, ~lat,
@@ -29,6 +32,7 @@ mod_mapping_tournois_server <- function(id, r_global){
                    label = ~label_text,
                    labelOptions = labelOptions(textsize = "12px"),
                    popup = ~popup_text)
+      }
     })
 
   })
