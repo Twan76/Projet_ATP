@@ -7,6 +7,9 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
+#' @importFrom tidyr gather
+#' @importFrom stringr str_replace_all
+#' @import ggplot2
 
 mod_graphique_evolution_tournois_ui <- function(id){
   ns <- NS(id)

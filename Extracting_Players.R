@@ -1,15 +1,11 @@
-library(XML)
-library(plyr)
 library(dplyr)
 library(textreadr)
 library(stringr)
 library(rvest)
-library(tibble)
 library(tidyr)
 library(purrr)
 library(ggmap)
 library(readr)
-library(leaflet)
 
 wiki_URL_ATP_World_Tour <- "https://www.atptour.com/en/tournaments"
 wiki_URL_ATP_Challenger <- "https://www.atptour.com/en/atp-challenger-tour/calendar"

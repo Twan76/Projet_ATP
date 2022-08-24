@@ -3,6 +3,7 @@
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
 #' @import shiny
+#' @import dplyr
 #' @noRd
 app_server <- function(input, output, session) {
 
@@ -14,7 +15,7 @@ app_server <- function(input, output, session) {
   r_global <- reactiveValues()
 
   r_global$dataset <- reactive({
-      filter(tournament_atp_final_df, Categorie %in% input$categorie & Surface %in% input$surface & Debut <= formatted_date())
+      dplyr::filter(tournament_atp_final_df, Categorie %in% input$categorie & Surface %in% input$surface & Debut <= formatted_date())
   })
 
   # Your application server logic
