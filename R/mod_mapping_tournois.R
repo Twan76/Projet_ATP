@@ -10,7 +10,7 @@
 mod_mapping_tournois_ui <- function(id){
   ns <- NS(id)
   tagList(
-    leafletOutput(ns("map"), height="700px")
+    leafletOutput(ns("map"), height="800px")
   )
 }
 
