@@ -15,6 +15,13 @@ tournament_atp_final_df$Fin <- as.Date(tournament_atp_final_df$Fin,origin="1899-
 
 current_date <- as.Date(max(tournament_atp_final_df$Debut),"%Y-%m-%d")
 
+ranking_atp_2022_df <- read_rds("ranking_atp_2022.rds")
+ranking_atp_2022_df$Date<- as.Date(ranking_atp_2022_df$Date,origin="1899-12-30")
+
+ranking_atp_annee_df <- read_rds("ranking_atp_annee.rds")
+ranking_atp_annee_df$Date<- as.Date(ranking_atp_annee_df$Date,origin="1899-12-30")
+
+
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
@@ -64,13 +71,22 @@ app_ui <- function(request) {
                                             tags$a(href='https://www.atptour.com/', tags$img(src='www/atp.png', height='40', width='35'))
                               )
                           )
-                 )
+                 ),
                  # tabPanel(title ="Evolution", icon = icon("chart-area"),
                  #          mod_graphique_evolution_tournois_ui("graphique_evolution_tournois_1")
                  # )
-                 # tabPanel(title ="Données", icon = icon("table"),
-                 #          mod_afficher_table_ui("afficher_table_1")
-                 # )
+                 tabPanel(title ="Données", icon = icon("table"),
+                          br(),
+                          h4("Type de données"),
+                          radioButtons("details_donnees", label = "", inline = T, choices = list("Tournois joués" = 0, "Classement ATP" = 1), selected = 0),
+                          br(),
+                          conditionalPanel(condition = "input.details_donnees == 0",
+                                           mod_afficher_table_ui("afficher_table_1")
+                          ),
+                          conditionalPanel(condition = "input.details_donnees == 1",
+                                           mod_afficher_table_ranking_ui("afficher_table_ranking_1")
+                          )
+                 )
       )
     )
   )

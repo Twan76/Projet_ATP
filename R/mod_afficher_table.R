@@ -19,14 +19,15 @@ mod_afficher_table_ui <- function(id){
 #' afficher_table Server Functions
 #'
 #' @noRd
-mod_afficher_table_server <- function(id, r_global){
+mod_afficher_table_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
     output$tournois_details <- renderDT({
-      datatable(r_global$dataset()[,c(1:8, 10:16)],filter="top", class = 'cell-border stripe', rownames = F) %>%
+      datatable(tournament_atp_final_df[,c(1:6,9,7,19,12,13,18,16,17,14,15)],filter="top", class = 'cell-border stripe', rownames = F) %>%
         formatDate(c(4,5), method = 'toLocaleDateString', params = list('fr-FR'))
     })
+
   })
 }
 
