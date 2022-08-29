@@ -9,6 +9,8 @@
 #' @import readr
 #' @noRd
 
+source(file = "barchart_race.R")
+
 tournament_atp_final_df <- read_rds("tournament_atp_final.rds")
 tournament_atp_final_df$Debut<- as.Date(tournament_atp_final_df$Debut,origin="1899-12-30")
 tournament_atp_final_df$Fin <- as.Date(tournament_atp_final_df$Fin,origin="1899-12-30")
@@ -18,8 +20,8 @@ current_date <- as.Date(max(tournament_atp_final_df$Debut),"%Y-%m-%d")
 ranking_atp_2022_df <- read_rds("ranking_atp_2022.rds")
 ranking_atp_2022_df$Date<- as.Date(ranking_atp_2022_df$Date,origin="1899-12-30")
 
-ranking_atp_annee_df <- read_rds("ranking_atp_annee.rds")
-ranking_atp_annee_df$Date<- as.Date(ranking_atp_annee_df$Date,origin="1899-12-30")
+ranking_atp_mois_2001_df <- read_rds("ranking_atp_mois_2001.rds")
+ranking_atp_mois_2001_df$Date<- as.Date(ranking_atp_mois_2001_df$Date,origin="1899-12-30")
 
 
 app_ui <- function(request) {
@@ -72,9 +74,64 @@ app_ui <- function(request) {
                               )
                           )
                  ),
-                 # tabPanel(title ="Evolution", icon = icon("chart-area"),
-                 #          mod_graphique_evolution_tournois_ui("graphique_evolution_tournois_1")
-                 # )
+                 tabPanel(title ="Evolution", icon = icon("chart-area"),
+                          br(),
+                          h4("Choix type de classement"),
+                          radioButtons("type_classement", label = "", inline = T, choices = list("Classement 2022" = 0, "Classement depuis 2001" = 1), selected = 0),
+                          br(),
+                          conditionalPanel(condition = "input.type_classement == 0",
+                                           fluidRow(
+                                             column(5,
+                                                    pickerInput("country_ranking_2022", label = "Choix pays", width="375px",
+                                                                choices = list("Tous les pays", Pays = sort(unique(ranking_atp_2022_df$Pays))),
+                                                                selected = "Tous les pays",
+                                                                multiple = FALSE,
+                                                                options = list(`actions-box` = TRUE,
+                                                                               `deselect-all-text` = "Tout désélectionner",
+                                                                               `select-all-text` = "Tout sélectionner",
+                                                                               `none-selected-text` = "Aucun pays choisi",
+                                                                               `live-search` = TRUE)
+                                                    )
+                                             ),
+                                             column(5,
+                                                    pickerInput("top_n_2022", label = "# Bars", width="375px",
+                                                                choices = c(5,10,15,20,25),
+                                                                selected = 10,
+                                                                multiple = FALSE,
+                                                                options = list(`actions-box` = TRUE,
+                                                                               `none-selected-text` = "Aucune sélection choisie")
+                                                    )
+                                             )
+                                           ),
+                                           mod_barchart_race_ranking_2022_ui("barchart_race_ranking_2022_1")
+                          ),
+                          conditionalPanel(condition = "input.type_classement == 1",
+                                           fluidRow(
+                                             column(5,
+                                                    pickerInput("country_ranking_2001", label = "Choix pays", width="375px",
+                                                                choices = list("Tous les pays", Pays = sort(unique(ranking_atp_mois_2001_df$Pays))),
+                                                                selected = "Tous les pays",
+                                                                multiple = FALSE,
+                                                                options = list(`actions-box` = TRUE,
+                                                                               `deselect-all-text` = "Tout désélectionner",
+                                                                               `select-all-text` = "Tout sélectionner",
+                                                                               `none-selected-text` = "Aucun pays choisi",
+                                                                               `live-search` = TRUE)
+                                                    )
+                                             ),
+                                             column(5,
+                                                    pickerInput("top_n_2001", label = "# Bars", width="375px",
+                                                                choices = c(5,10,15,20,25),
+                                                                selected = 10,
+                                                                multiple = FALSE,
+                                                                options = list(`actions-box` = TRUE,
+                                                                               `none-selected-text` = "Aucune sélection choisie")
+                                                    )
+                                             )
+                                           ),
+                                           mod_barchart_race_ranking_2001_ui("barchart_race_ranking_2001_1")
+                          )
+                 ),
                  tabPanel(title ="Données", icon = icon("table"),
                           br(),
                           h4("Type de données"),

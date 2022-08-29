@@ -15,13 +15,38 @@ app_server <- function(input, output, session) {
   r_global <- reactiveValues()
 
   r_global$dataset <- reactive({
-      filter(tournament_atp_final_df, Categorie %in% input$categorie & Surface %in% input$surface & Debut <= formatted_date())
+      dplyr::filter(tournament_atp_final_df, Categorie %in% input$categorie & Surface %in% input$surface & Debut <= formatted_date())
+  })
+
+  r_global$dataset_ranking_2022 <- reactive({
+      if (input$country_ranking_2022 == "Tous les pays") {
+        ranking_atp_2022_df
+      } else {
+        dplyr::filter(ranking_atp_2022_df, Pays == input$country_ranking_2022)
+      }
+  })
+
+  r_global$dataset_ranking_2001 <- reactive({
+    if (input$country_ranking_2001 == "Tous les pays") {
+      ranking_atp_mois_2001_df
+    } else {
+      dplyr::filter(ranking_atp_mois_2001_df, Pays == input$country_ranking_2001)
+    }
+  })
+
+  r_global$top_n_2022 <- reactive({
+    top_n <- as.integer(input$top_n_2022)
+  })
+
+  r_global$top_n_2001 <- reactive({
+    top_n <- as.integer(input$top_n_2001)
   })
 
   # Your application server logic
   mod_mapping_tournois_server("mapping_tournois_1", r_global = r_global)
   mod_graphique_evolution_tournois_server("graphique_evolution_tournois_1", r_global = r_global)
+  mod_barchart_race_ranking_2022_server("barchart_race_ranking_2022_1",  r_global = r_global)
+  mod_barchart_race_ranking_2001_server("barchart_race_ranking_2001_1", r_global = r_global)
   mod_afficher_table_server("afficher_table_1")
   mod_afficher_table_ranking_server("afficher_table_ranking_1")
-
 }
