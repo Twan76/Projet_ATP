@@ -114,9 +114,9 @@ tournament_atp <- function(x) {
       html_node(xpath = '//*[@class="player-profile-hero-table"]') %>%
       html_table(fill = TRUE) #Turn that info into a table
     player_info <- data.frame(Age=player_info[1,1],Birthplace=player_info[2,1],TurnedPro=player_info[1,2],Play=player_info[2,2],Weight=player_info[1,3],Coach=player_info[2,3],Height=player_info[1,4])
-    names(player_info) = c("Age","DateNaissance","ProDepuis","Style","Poids","Coach","Taille")
+    names(player_info) = c("Age","LieuNaissance","ProDepuis","Style","Poids","Coach","Taille")
     player_info$Age <- substr(player_info$Age,40,41)
-    player_info$DateNaissance <- substr(player_info$DateNaissance,117,nchar(player_info$DateNaissance))
+    player_info$LieuNaissance <- substr(player_info$LieuNaissance,117,nchar(player_info$LieuNaissance))
     player_info$ProDepuis <- substr(player_info$ProDepuis,nchar(player_info$ProDepuis)-3,nchar(player_info$ProDepuis))
     player_info$Style <- substr(player_info$Style,76,nchar(player_info$Style))
     player_info$Poids <- substr(player_info$Poids, str_locate(player_info$Poids, "\\(")[,1]+1, str_locate(player_info$Poids, "\\)")[,1]-1)
@@ -181,7 +181,7 @@ tournament_atp <- function(x) {
                                                "</br><b>Vainqueur : </b> ", Vainqueur,
                                                "</br><b>Nationalité : </b> ", Nationalite,
                                                "</br><b>Age : </b> ", Age,
-                                               "</br><b>Naissance : </b> ", DateNaissance,
+                                               "</br><b>Naissance : </b> ", LieuNaissance,
                                                "</br><b>Prise de raquette :</b> ", Style,
                                                "</br><b>Taille :</b> ", Taille,
                                                "</br><b>Poids :</b> ", Poids,

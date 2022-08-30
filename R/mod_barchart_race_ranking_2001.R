@@ -7,6 +7,9 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
+#' @import shinycssloaders
+
+
 mod_barchart_race_ranking_2001_ui <- function(id){
   ns <- NS(id)
   tagList(

@@ -24,7 +24,7 @@ mod_afficher_table_server <- function(id){
     ns <- session$ns
 
     output$tournois_details <- renderDT({
-      datatable(tournament_atp_final_df[,c(1:6,9,7,19,12,13,18,16,17,14,15)],filter="top", class = 'cell-border stripe', rownames = F) %>%
+      datatable(tournament_atp_final_df[,c(1:6,9,7,19,12)],filter="top", class = 'cell-border stripe', rownames = F) %>%
         formatDate(c(4,5), method = 'toLocaleDateString', params = list('fr-FR'))
     })
 

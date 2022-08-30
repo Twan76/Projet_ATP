@@ -11,18 +11,17 @@
 
 source(file = "barchart_race.R")
 
-tournament_atp_final_df <- read_rds("tournament_atp_final.rds")
+tournament_atp_final_df <- readr::read_rds("tournament_atp_final.rds")
 tournament_atp_final_df$Debut<- as.Date(tournament_atp_final_df$Debut,origin="1899-12-30")
 tournament_atp_final_df$Fin <- as.Date(tournament_atp_final_df$Fin,origin="1899-12-30")
 
-current_date <- as.Date(max(tournament_atp_final_df$Debut),"%Y-%m-%d")
-
-ranking_atp_2022_df <- read_rds("ranking_atp_2022.rds")
+ranking_atp_2022_df <- readr::read_rds("ranking_atp_2022.rds")
 ranking_atp_2022_df$Date<- as.Date(ranking_atp_2022_df$Date,origin="1899-12-30")
 
-ranking_atp_mois_2001_df <- read_rds("ranking_atp_mois_2001.rds")
+ranking_atp_mois_2001_df <- readr::read_rds("ranking_atp_mois_2001.rds")
 ranking_atp_mois_2001_df$Date<- as.Date(ranking_atp_mois_2001_df$Date,origin="1899-12-30")
 
+current_date <- as.Date(max(tournament_atp_final_df$Debut),"%Y-%m-%d")
 
 app_ui <- function(request) {
   tagList(
@@ -39,6 +38,7 @@ app_ui <- function(request) {
                               absolutePanel(id = "controls", class = "panel panel-default",
                                             top = 75, right = 20, fixed=TRUE,
                                             draggable = TRUE, height = "auto", width = "400px",
+                                            br(),
                                             pickerInput("categorie", label = "Catégorie :", width="375px",
                                                         choices = list(`Circuit secondaire` = c("Challenger 50", "Challenger 80", "Challenger 90", "Challenger 100", "Challenger 125"),
                                                                        `Circuit principal` = c("ATP 250", "ATP 500", "Masters 1000", "Grand Chelem")),
@@ -63,8 +63,8 @@ app_ui <- function(request) {
                                                             choices = format(sort(unique(tournament_atp_final_df$Debut)), "%d %b %y"),
                                                             selected = format(current_date, "%d %b %y"),
                                                             grid = FALSE,
-                                                            animate=animationOptions(interval = 1000, loop = FALSE)),
-                                            mod_graphique_evolution_tournois_ui("graphique_evolution_tournois_1")
+                                                            animate=animationOptions(interval = 1000, loop = FALSE))
+                                            # mod_graphique_evolution_tournois_ui("graphique_evolution_tournois_1")
                               ),
                               absolutePanel(id = "logo", class = "card", bottom = 20, left = 20, width = 30, fixed=TRUE, draggable = FALSE, height = "auto",
                                             tags$a(href='https://github.com/Twan76/Projet_ATP/', tags$i(class = "fa fa-github", style = "font-size:40px; color: black;"))
