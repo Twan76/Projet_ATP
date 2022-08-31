@@ -51,3 +51,13 @@ h1, h2, h3, h4 { font-weight: 400; }
   opacity: 0.95;
   transition-delay: 0;
 }
+
+/* Timeline */
+.vis-item.vis-box {
+border-radius: 4px;
+}
+
+.vis-item.vis-selected {
+  border-color: #fd9a47;
+  background-color: #fd9a47;
+}

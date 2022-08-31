@@ -12,13 +12,119 @@ library(lubridate)
 wiki_URL_ATP_World_Tour <- "https://www.atptour.com/en/tournaments"
 wiki_URL_ATP_Challenger <- "https://www.atptour.com/en/atp-challenger-tour/calendar"
 
+# Recuperer uniquement données du tournoi (y compris non joués)
+tournois_details <- function(x)  {
+  tournois_details <- read_html(x) %>%
+    html_nodes(xpath = '//*[@class="tourney-results-wrapper"]') %>%
+    html_table(fill = TRUE)
+  tournois_details <- rbindlist(tournois_details)
+
+  temp <- tournois_details[seq(1,nrow(tournois_details),2),6] #
+  tournois_details <- tournois_details[seq(1,nrow(tournois_details),2),c(2,5,7)]
+  names(tournois_details) <- c("Details", "Surface", "Vainqueur")
+
+  # Recuperer categorie tournoi (250, 500, etc)
+  categorystamp <- read_html(x) %>% #Back to Wikipedia we go
+    html_nodes(xpath = '//*[@class="tourney-results-wrapper"]') %>%
+    html_nodes("td > img") %>%
+    html_attr("src") #Grab its URL location
+
+  icon_categorystamp <- paste0("https://www.atptour.com", categorystamp)
+
+  tournois_details <-tournois_details %>% #Take the players data frame
+    mutate(icon_categorie = icon_categorystamp)
+
+  df_select_categorystamp <- data.frame(deb = str_locate(categorystamp, "/assets/atpwt/images/tournament/badges/categorystamps_")[,2])
+  categorystamp <- substr(categorystamp, df_select_categorystamp[,"deb"]+1, nchar(categorystamp)-4)
+
+  for(i in 1:length(categorystamp)){
+    if(categorystamp[i] == "challenger") {
+      categorystamp[i] <- temp[i]
+    }
+  }
+
+  # Recuperer lien joueur atp world tour + photo si possible
+  tournois_details <- tournois_details %>% #Take the players data frame
+    mutate(Categorie = categorystamp)
+
+  tournois_details$Categorie <- str_replace_all(tournois_details$Categorie,"  ","")
+  tournois_details$Categorie <- str_replace_all(tournois_details$Categorie,"\r\n"," ")
+
+  # Renommer les catégories
+  select_atp_250 <- (tournois_details$Categorie == 250)
+  select_atp_500 <- (tournois_details$Categorie == 500)
+  select_atp_1000 <- (tournois_details$Categorie == 1000)
+  select_atp_grand_chelem <- (tournois_details$Categorie == "grandslam")
+  select_atp_autre <- (tournois_details$Categorie %in% c("atpcup","finals","itf","lvr","nextgen"))
+  select_atp_coupe_davis <- (tournois_details$Categorie == "grandslam")
+  tournois_details[select_atp_250,5] <- "ATP 250"
+  tournois_details[select_atp_500,5] <- "ATP 500"
+  tournois_details[select_atp_1000,5] <- "Masters 1000"
+  tournois_details[select_atp_grand_chelem,5] <- "Grand Chelem"
+  tournois_details[select_atp_autre,5] <- "Autre"
+
+  tournois_details$Details <- str_replace_all(tournois_details$Details,"  ","")
+  tournois_details$Details <- str_replace_all(tournois_details$Details,"\r\n\r\n\r\n\r\n",", ")
+  tournois_details$Details <- str_replace_all(tournois_details$Details,"\r\n","")
+
+  for(j in 1:length(tournois_details$Details)){
+    if(length(unlist(str_split(tournois_details$Details,",")[[j]]))==3) {
+      tournois_details$Details[j] <- paste0(unlist(str_split(tournois_details$Details,",")[[j]])[1],",", unlist(str_split(tournois_details$Details,",")[[j]])[2],", ,",unlist(str_split(tournois_details$Details,",")[[j]])[3],sep=" ")
+    }
+    else if(length(unlist(str_split(tournois_details$Details,",")[[j]]))==5) {
+      tournois_details$Details[j] <- paste0(unlist(str_split(tournois_details$Details,",")[[j]])[1],",",unlist(str_split(tournois_details$Details,",")[[j]])[2],",",unlist(str_split(tournois_details$Details,",")[[j]])[4],",",unlist(str_split(tournois_details$Details,",")[[j]])[5], sep=" ")
+    }
+  }
+
+  tournois_details$Surface <- str_replace_all(tournois_details$Surface,"  ","")
+  tournois_details$Surface <- str_replace_all(tournois_details$Surface,"\r\n\r\n",", ")
+
+  tournois_details$Vainqueur <- str_replace_all(tournois_details$Vainqueur,"  ","")
+  df_select <- data.frame(deb = str_locate(tournois_details$Vainqueur, "SGL")[,1], fin = str_locate(tournois_details$Vainqueur, "DBL")[,1])
+  tournois_details$Vainqueur <- substr(tournois_details$Vainqueur, df_select[,"deb"]+3, df_select[,"fin"]-1)
+  tournois_details$Vainqueur <- str_replace_all(tournois_details$Vainqueur,"\r\n","")
+
+  tournois_details <- separate(tournois_details, col="Details", into=c("Tournoi","Ville","Pays","Date"), sep=", ")
+  tournois_details <- separate(tournois_details, col="Date", into=c("Debut","Fin"), sep=" - ")
+
+  #  Format date
+  tournois_details$Debut <- str_replace_all(tournois_details$Debut, "\\.", "-")
+  tournois_details$Debut <- as.Date(tournois_details$Debut)
+
+  tournois_details$Fin <- str_replace_all(tournois_details$Fin, "\\.", "-")
+  tournois_details$Fin <- as.Date(tournois_details$Fin)
+
+  # Renommer les surfaces
+  select_atp_outdoor_hard <- (tournois_details$Surface == "Outdoor, Hard")
+  select_atp_outdoor_clay <- (tournois_details$Surface == "Outdoor, Clay")
+  select_atp_outdoor_grass <- (tournois_details$Surface == "Outdoor, Grass")
+  select_atp_indoor_hard <- (tournois_details$Surface == "Indoor, Hard")
+  select_atp_indoor_clay <- (tournois_details$Surface == "Indoor, Clay")
+  select_atp_indoor_carpet <- (tournois_details$Surface == "Indoor, Carpet")
+  tournois_details[select_atp_outdoor_hard,6] <- "Dur ext."
+  tournois_details[select_atp_outdoor_clay,6] <- "TB ext."
+  tournois_details[select_atp_outdoor_grass,6] <- "Gazon"
+  tournois_details[select_atp_indoor_hard,6] <- "Dur int."
+  tournois_details[select_atp_indoor_clay,6] <- "TB int."
+  tournois_details[select_atp_indoor_carpet,6] <- "Moquette"
+
+  return(tournois_details)
+}
+
+tournois_details_ATP <- tournois_details(wiki_URL_ATP_World_Tour)
+tournois_details_Challenger <- tournois_details(wiki_URL_ATP_Challenger)
+tournament_details_final <- rbind(tournois_details_ATP,tournois_details_Challenger)
+
+#Saving for the app
+write_rds(tournament_details_final, "tournament_details_final.rds")
+
 tournament_atp <- function(x) {
   tournament_atp <- read_html(x) %>%
     html_nodes(xpath = '//*[@class="tourney-results-wrapper"]') %>%
     html_table(fill = TRUE)
   tournament_atp <- rbindlist(tournament_atp)
 
-  temp <- tournament_atp[seq(1,nrow(tournament_atp),2),6] # Problematique challengers
+  temp <- tournament_atp[seq(1,nrow(tournament_atp),2),6] #
   tournament_atp <- tournament_atp[seq(1,nrow(tournament_atp),2),c(2,5,7)]
   names(tournament_atp) <- c("Details", "Surface", "Vainqueur")
 
@@ -83,8 +189,8 @@ tournament_atp <- function(x) {
   # Supprimer les tournois pas encore déroulés
   tournament_atp <- tournament_atp[is.na(tournament_atp$Vainqueur) == FALSE,]
 
-  tournament_atp <- separate(tournament_atp, col="Details", into=c("Tournoi","Ville","Pays","Date"), sep=",")
-  tournament_atp <- separate(tournament_atp, col="Date", into=c("Debut","Fin"), sep="-")
+  tournament_atp <- separate(tournament_atp, col="Details", into=c("Tournoi","Ville","Pays","Date"), sep=", ")
+  tournament_atp <- separate(tournament_atp, col="Date", into=c("Debut","Fin"), sep=" - ")
 
   #Now extracting the players' wiki pages so that I can look up their personal information (place of birth, height, playing position)
   player_links <- read_html(x) %>%
@@ -144,12 +250,10 @@ tournament_atp <- function(x) {
     select(-type, -loctype, -address, -north, -south, -east, -west) #Remove unneeded columns
 
   #  Format date
-  tournament_atp$Debut <- str_replace_all(tournament_atp$Debut, " ", "")
-  tournament_atp$Debut <- str_replace_all(tournament_atp$Debut, "\\.", "/")
+  tournament_atp$Debut <- str_replace_all(tournament_atp$Debut, "\\.", "-")
   tournament_atp$Debut <- as.Date(tournament_atp$Debut)
 
-  tournament_atp$Fin <- str_replace_all(tournament_atp$Fin, " ", "")
-  tournament_atp$Fin <- str_replace_all(tournament_atp$Fin, "\\.", "/")
+  tournament_atp$Fin <- str_replace_all(tournament_atp$Fin, "\\.", "-")
   tournament_atp$Fin <- as.Date(tournament_atp$Fin)
 
   # Renommer les surfaces
@@ -158,11 +262,13 @@ tournament_atp <- function(x) {
   select_atp_outdoor_grass <- (tournament_atp$Surface == "Outdoor, Grass")
   select_atp_indoor_hard <- (tournament_atp$Surface == "Indoor, Hard")
   select_atp_indoor_clay <- (tournament_atp$Surface == "Indoor, Clay")
+  select_atp_indoor_carpet <- (tournament_atp$Surface == "Indoor, Carpet")
   tournament_atp[select_atp_outdoor_hard,6] <- "Dur ext."
   tournament_atp[select_atp_outdoor_clay,6] <- "TB ext."
   tournament_atp[select_atp_outdoor_grass,6] <- "Gazon"
   tournament_atp[select_atp_indoor_hard,6] <- "Dur int."
   tournament_atp[select_atp_indoor_clay,6] <- "TB int."
+  tournament_atp[select_atp_indoor_carpet,6] <- "Moquette"
 
   # Renommer les types de jeu
   select_atp_droitier_rev2m <- (tournament_atp$Style == "Right-Handed, Two-Handed Backhand")
@@ -191,7 +297,7 @@ tournament_atp <- function(x) {
 
   tournament_atp <- mutate(tournament_atp,
                            label_text = paste0("<center>", #Setting up poopup info
-                                               " <b>Tournoi : </b> ", Tournoi,",", Ville,",", Pays,
+                                               " <b>Tournoi : </b> ", Tournoi,", ", Ville,", ", Pays,
                                                "</br><b>Surface : </b> ", Surface,
                                                "</br><b> Date : </b> ", "Du ", format(Debut,"%d/%m/%Y"), " au ", format(Fin, "%d/%m/%Y"),
                                                "</br><b>Catégorie :</b> ", Categorie, "</center>") %>% lapply(htmltools::HTML))
@@ -199,19 +305,20 @@ tournament_atp <- function(x) {
   return(tournament_atp)
 }
 
-tournament_atp_final <- tournament_atp(wiki_URL_ATP_World_Tour)
-tournament_atp_challenger_final <- tournament_atp(wiki_URL_ATP_Challenger)
-tournament_atp_final <- rbind(tournament_atp_final,tournament_atp_challenger_final)
+tournament_ATP <- tournament_atp(wiki_URL_ATP_World_Tour)
+tournament_Challenger <- tournament_atp(wiki_URL_ATP_Challenger)
+tournament_atp_final <- rbind(tournament_ATP,tournament_Challenger)
 
 #Saving for the app
 write_rds(tournament_atp_final, "tournament_atp_final.rds")
+
 # ##############################################################
 # Récupérer classements ATP 2022 (sortie chaque lundi)
 x <- seq(as.Date("2022-01-01"), today(), by = "day")
-lundis_2022 <- x[weekdays(x) == "Lundi"]
+lundis_2022 <- x[weekdays(x) == "lundi"]
 
 y <- seq(ymd("2001-01-01"), today(), by="1 day")
-lundis_mois_2001 <- y[weekdays(y) == "Lundi" & day(y) <= 7]
+lundis_mois_2001 <- y[weekdays(y) == "lundi" & day(y) <= 7]
 
 ranking_par_date <- function(x) {
   ranking_atp_maj <- c()

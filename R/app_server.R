@@ -18,6 +18,10 @@ app_server <- function(input, output, session) {
       dplyr::filter(tournament_atp_final_df, Categorie %in% input$categorie & Surface %in% input$surface & Debut <= formatted_date())
   })
 
+  r_global$dataset_timeline <- reactive({
+    dplyr::filter(tournament_details_final_df, Categorie %in% input$timeline_categorie & Surface %in% input$timeline_surface)
+  })
+
   r_global$dataset_ranking_2022 <- reactive({
       if (input$country_ranking_2022 == "Tous les pays") {
         ranking_atp_2022_df
@@ -44,6 +48,7 @@ app_server <- function(input, output, session) {
 
   # Your application server logic
   mod_mapping_tournois_server("mapping_tournois_1", r_global = r_global)
+  mod_timeline_tournois_server("timeline_tournois_1", r_global = r_global)
   mod_barchart_race_ranking_2022_server("barchart_race_ranking_2022_1",  r_global = r_global)
   mod_barchart_race_ranking_2001_server("barchart_race_ranking_2001_1", r_global = r_global)
   mod_graphique_evolution_tournois_server("graphique_evolution_tournois_1")

@@ -15,6 +15,10 @@ tournament_atp_final_df <- readr::read_rds("tournament_atp_final.rds")
 tournament_atp_final_df$Debut<- as.Date(tournament_atp_final_df$Debut,origin="1899-12-30")
 tournament_atp_final_df$Fin <- as.Date(tournament_atp_final_df$Fin,origin="1899-12-30")
 
+tournament_details_final_df <- readr::read_rds("tournament_details_final.rds")
+tournament_details_final_df$Debut<- as.Date(tournament_details_final_df$Debut,origin="1899-12-30")
+tournament_details_final_df$Fin <- as.Date(tournament_details_final_df$Fin,origin="1899-12-30")
+
 ranking_atp_2022_df <- readr::read_rds("ranking_atp_2022.rds")
 ranking_atp_2022_df$Date<- as.Date(ranking_atp_2022_df$Date,origin="1899-12-30")
 
@@ -40,7 +44,7 @@ app_ui <- function(request) {
                                             draggable = TRUE, height = "auto", width = "400px",
                                             br(),
                                             pickerInput("categorie", label = "Catégorie :", width="375px",
-                                                        choices = list(`Circuit secondaire` = c("Challenger 50", "Challenger 80", "Challenger 90", "Challenger 100", "Challenger 125"),
+                                                        choices = list(`Circuit challenger` = c("Challenger 50", "Challenger 80", "Challenger 90", "Challenger 100", "Challenger 125"),
                                                                        `Circuit principal` = c("ATP 250", "ATP 500", "Masters 1000", "Grand Chelem")),
                                                         selected = c("ATP 250", "ATP 500", "Masters 1000", "Grand Chelem"),
                                                         multiple = TRUE,
@@ -66,13 +70,42 @@ app_ui <- function(request) {
                                                             animate=animationOptions(interval = 1000, loop = FALSE))
                                             # mod_graphique_evolution_tournois_ui("graphique_evolution_tournois_1")
                               ),
-                              absolutePanel(id = "logo", class = "card", bottom = 20, left = 20, width = 30, fixed=TRUE, draggable = FALSE, height = "auto",
+                              absolutePanel(id = "logo", class = "card", bottom = 40, left = 20, width = 30, fixed=TRUE, draggable = FALSE, height = "auto",
                                             tags$a(href='https://github.com/Twan76/Projet_ATP/', tags$i(class = "fa fa-github", style = "font-size:40px; color: black;"))
                               ),
-                              absolutePanel(id = "logo", class = "card", bottom = 20, left = 80, width = 30, fixed=TRUE, draggable = FALSE, height = "auto",
+                              absolutePanel(id = "logo", class = "card", bottom = 40, left = 80, width = 30, fixed=TRUE, draggable = FALSE, height = "auto",
                                             tags$a(href='https://www.atptour.com/', tags$img(src='www/atp.png', height='40', width='35'))
                               )
                           )
+                 ),
+                 tabPanel(title = "Timeline", icon = icon("calendar"),
+                          fluidRow(
+                            column(5,
+                                   pickerInput("timeline_categorie", label = "Catégorie :", width="375px",
+                                               choices = list(`Circuit secondaire` = c("Challenger 50", "Challenger 80", "Challenger 90", "Challenger 100", "Challenger 125"),
+                                                              `Circuit principal` = c("ATP 250", "ATP 500", "Masters 1000", "Grand Chelem"),
+                                                              "Autre"),
+                                               selected = unique(tournament_details_final_df$Categorie),
+                                               multiple = TRUE,
+                                               options = list(`actions-box` = TRUE,
+                                                              `deselect-all-text` = "Tout désélectionner",
+                                                              `select-all-text` = "Tout sélectionner",
+                                                              `none-selected-text` = "Aucune catégorie choisie")
+                                   )
+                            ),
+                            column(5,
+                                   pickerInput("timeline_surface", label = "Surface :", width="375px",
+                                               choices = sort(unique(tournament_details_final_df$Surface)),
+                                               selected = sort(unique(tournament_details_final_df$Surface)),
+                                               multiple = TRUE,
+                                               options = list(`actions-box` = TRUE,
+                                                              `deselect-all-text` = "Tout désélectionner",
+                                                              `select-all-text` = "Tout sélectionner",
+                                                              `none-selected-text` = "Aucune surface choisie")
+                                   )
+                            )
+                          ),
+                          mod_timeline_tournois_ui("timeline_tournois_1")
                  ),
                  tabPanel(title ="Evolution", icon = icon("chart-area"),
                           br(),
