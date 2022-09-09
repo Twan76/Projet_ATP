@@ -13,6 +13,7 @@ Imports:
     ggmap,
     golem (>= 0.3.3),
     leaflet,
+    lubridate,
     pkgload,
     purrr,
     r2d3,
@@ -24,7 +25,8 @@ Imports:
     shinyWidgets,
     stringr,
     textreadr,
-    tidyr
+    tidyr,
+    timevis
 Suggests: 
     spelling,
     testthat (>= 3.0.0)

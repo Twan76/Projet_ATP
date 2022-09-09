@@ -25,6 +25,8 @@ ranking_atp_2022_df$Date<- as.Date(ranking_atp_2022_df$Date,origin="1899-12-30")
 ranking_atp_mois_2001_df <- readr::read_rds("ranking_atp_mois_2001.rds")
 ranking_atp_mois_2001_df$Date<- as.Date(ranking_atp_mois_2001_df$Date,origin="1899-12-30")
 
+player_stats_df <- readr::read_rds("player_stats.rds")
+
 current_date <- as.Date(max(tournament_atp_final_df$Debut),"%Y-%m-%d")
 
 app_ui <- function(request) {
@@ -107,6 +109,33 @@ app_ui <- function(request) {
                           ),
                           mod_timeline_tournois_ui("timeline_tournois_1")
                  ),
+                 tabPanel(title = "Similarités", icon = icon("person"),
+                          sidebarPanel(
+                            width = 4,
+                            pickerInput('Joueur', label = p("Les 3 joueurs ayant le style de jeu ressemblant le plus à :", style = "font-size:20px"),
+                                        choices = sort(unique(player_stats_df$Joueur)),
+                                        selected = "Rafael Nadal",
+                                        multiple = FALSE,
+                                        options = list(`live-search` = TRUE)
+                            ),
+                            hr(),
+                            p("La similarité entre les joueurs est déterminée en utilisant une technique de data mining,
+                            appelée la", a("méthode des plus proches voisins", href="https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm", target="_blank"), ".",style = "font-size:20px;"),
+                            hr(), hr(), hr(),   hr(), hr(), hr(),
+                            p("Définition des abbréviatitons :",style = "font-size:20px; font-weight: bold;"),
+                            p("PctSW : % de services gagnés",style = "font-size:20px;"),
+                            p("Pct1S : % de première balle au service",style = "font-size:20px;"),
+                            p("Pct1SW : % de points gagnés sur première balle",style = "font-size:20px;"),
+                            p("Pct2SW : % de points gagnés sur seconde balle",style = "font-size:20px;"),
+                            p("PctBPS : % de balles de breaks sauvées",style = "font-size:20px;"),
+                            p("P1SR : % de points gagnés sur première balle adverse",style = "font-size:20px;"),
+                            p("P2SR : % de points gagnés sur deuxième balle advserse",style = "font-size:20px;")
+                          ),
+                          mainPanel(
+                            width = 8,
+                            mod_radar_ui("radar_1")
+                            )
+                 ),
                  tabPanel(title ="Evolution", icon = icon("chart-area"),
                           br(),
                           h4("Choix type de classement"),
@@ -119,11 +148,7 @@ app_ui <- function(request) {
                                                                 choices = list("Tous les pays", Pays = sort(unique(ranking_atp_2022_df$Pays))),
                                                                 selected = "Tous les pays",
                                                                 multiple = FALSE,
-                                                                options = list(`actions-box` = TRUE,
-                                                                               `deselect-all-text` = "Tout désélectionner",
-                                                                               `select-all-text` = "Tout sélectionner",
-                                                                               `none-selected-text` = "Aucun pays choisi",
-                                                                               `live-search` = TRUE)
+                                                                options = list(`live-search` = TRUE)
                                                     )
                                              ),
                                              column(5,
@@ -145,11 +170,7 @@ app_ui <- function(request) {
                                                                 choices = list("Tous les pays", Pays = sort(unique(ranking_atp_mois_2001_df$Pays))),
                                                                 selected = "Tous les pays",
                                                                 multiple = FALSE,
-                                                                options = list(`actions-box` = TRUE,
-                                                                               `deselect-all-text` = "Tout désélectionner",
-                                                                               `select-all-text` = "Tout sélectionner",
-                                                                               `none-selected-text` = "Aucun pays choisi",
-                                                                               `live-search` = TRUE)
+                                                                options = list(`live-search` = TRUE)
                                                     )
                                              ),
                                              column(5,

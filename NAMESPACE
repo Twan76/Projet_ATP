@@ -2,10 +2,12 @@
 
 export(run_app)
 import(DT)
+import(FNN)
 import(dplyr)
 import(echarts4r)
 import(leaflet)
 import(lubridate)
+import(plotly)
 import(readr)
 import(shiny)
 import(shinyWidgets)

@@ -39,11 +39,25 @@ app_server <- function(input, output, session) {
   })
 
   r_global$top_n_2022 <- reactive({
-    top_n <- as.integer(input$top_n_2022)
+    as.integer(input$top_n_2022)
   })
 
   r_global$top_n_2001 <- reactive({
-    top_n <- as.integer(input$top_n_2001)
+    as.integer(input$top_n_2001)
+  })
+
+  r_global$player_selected_radar <- reactive({
+     input$Player
+  })
+
+  r_global$dataset1 <- reactive({
+    player_stats_df %>%
+    filter(player_stats_df$Joueur != input$Joueur)
+  })
+
+  r_global$dataset2 <- reactive({
+    player_stats_df %>%
+      filter(player_stats_df$Joueur == input$Joueur)
   })
 
   # Your application server logic
@@ -51,11 +65,13 @@ app_server <- function(input, output, session) {
   mod_timeline_tournois_server("timeline_tournois_1", r_global = r_global)
   mod_barchart_race_ranking_2022_server("barchart_race_ranking_2022_1",  r_global = r_global)
   mod_barchart_race_ranking_2001_server("barchart_race_ranking_2001_1", r_global = r_global)
+  mod_radar_server("radar_1", r_global = r_global)
   mod_graphique_evolution_tournois_server("graphique_evolution_tournois_1")
   mod_afficher_table_server("afficher_table_1")
   mod_afficher_table_ranking_server("afficher_table_ranking_1")
 
   # Google charts avec indexplayer, points et age, faire liaison couleur ? continent?
-  # timeline (ajouter tournois a venir), radar
+  # radar
+  # ajouter classement à la race, classement jeunes..
   # https://shiny.rstudio.com/gallery/scotpho-profiles.html, trend en rajoutant des joueurs (evolution classement)
 }

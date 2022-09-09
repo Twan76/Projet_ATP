@@ -27,6 +27,7 @@ golem::add_module(name = "afficher_table_ranking", with_test = TRUE) # Name of t
 golem::add_module(name = "barchart_race_ranking_2022", with_test = TRUE) # Name of the module
 golem::add_module(name = "barchart_race_ranking_2001", with_test = TRUE) # Name of the module
 golem::add_module(name = "timeline_tournois", with_test = TRUE) # Name of the module
+golem::add_module(name = "radar", with_test = TRUE) # Name of the module
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*

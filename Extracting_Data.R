@@ -9,8 +9,8 @@ library(readr)
 library(data.table)
 library(lubridate)
 
-wiki_URL_ATP_World_Tour <- "https://www.atptour.com/en/tournaments"
-wiki_URL_ATP_Challenger <- "https://www.atptour.com/en/atp-challenger-tour/calendar"
+URL_ATP_World_Tour <- "https://www.atptour.com/en/tournaments"
+URL_ATP_Challenger <- "https://www.atptour.com/en/atp-challenger-tour/calendar"
 
 # Recuperer uniquement données du tournoi (y compris non joués)
 tournois_details <- function(x)  {
@@ -111,8 +111,8 @@ tournois_details <- function(x)  {
   return(tournois_details)
 }
 
-tournois_details_ATP <- tournois_details(wiki_URL_ATP_World_Tour)
-tournois_details_Challenger <- tournois_details(wiki_URL_ATP_Challenger)
+tournois_details_ATP <- tournois_details(URL_ATP_World_Tour)
+tournois_details_Challenger <- tournois_details(URL_ATP_Challenger)
 tournament_details_final <- rbind(tournois_details_ATP,tournois_details_Challenger)
 
 #Saving for the app
@@ -305,8 +305,8 @@ tournament_atp <- function(x) {
   return(tournament_atp)
 }
 
-tournament_ATP <- tournament_atp(wiki_URL_ATP_World_Tour)
-tournament_Challenger <- tournament_atp(wiki_URL_ATP_Challenger)
+tournament_ATP <- tournament_atp(URL_ATP_World_Tour)
+tournament_Challenger <- tournament_atp(URL_ATP_Challenger)
 tournament_atp_final <- rbind(tournament_ATP,tournament_Challenger)
 
 #Saving for the app
@@ -511,3 +511,69 @@ ranking_atp_mois_2001 <- ranking_par_date(lundis_mois_2001)
 write_rds(ranking_atp_2022, "ranking_atp_2022.rds")
 write_rds(ranking_atp_mois_2001, "ranking_atp_mois_2001.rds")
 
+# Récupérer données Leaderboards pour construction radar
+URL_ATP_World_Tour_Stats_ServiceGamesWon <- "https://www.atptour.com/en/stats/service-games-won/2022/all/all/"
+URL_ATP_World_Tour_Stats_1stServe <- "https://www.atptour.com/en/stats/1st-serve/2022/all/all/"
+URL_ATP_World_Tour_Stats_1stServePointsWon <- "https://www.atptour.com/en/stats/1st-serve-points-won/2022/all/all/"
+URL_ATP_World_Tour_Stats_2ndServePointsWon <- "https://www.atptour.com/en/stats/2nd-serve-points-won/2022/all/all/"
+URL_ATP_World_Tour_Stats_BreakPointsSaved <- "https://www.atptour.com/en/stats/break-points-saved/2022/all/all/"
+URL_ATP_World_Tour_Stats_1stServeReturnPointsWon <- "https://www.atptour.com/en/stats/1st-serve-return-points-won/2022/all/all/"
+URL_ATP_World_Tour_Stats_2ndServeReturnPointsWon <- "https://www.atptour.com/en/stats/2nd-serve-return-points-won/2022/all/all/"
+
+player_stats_ServiceGamesWon <- read_html(URL_ATP_World_Tour_Stats_ServiceGamesWon) %>%
+  html_nodes(xpath = '//*[@class="stats-listing-table"]') %>%
+  html_table(fill = TRUE) %>% data.frame()
+player_stats_ServiceGamesWon <- data.frame(Joueur=player_stats_ServiceGamesWon[seq(1,nrow(player_stats_ServiceGamesWon),2),5],PctSW=player_stats_ServiceGamesWon[seq(1,nrow(player_stats_ServiceGamesWon),2),6])
+
+player_stats_1stServe <- read_html(URL_ATP_World_Tour_Stats_1stServe) %>%
+  html_nodes(xpath = '//*[@class="stats-listing-table"]') %>%
+  html_table(fill = TRUE) %>% data.frame()
+player_stats_1stServe <- data.frame(Joueur=player_stats_1stServe[seq(1,nrow(player_stats_1stServe),2),5],Pct1S=player_stats_1stServe[seq(1,nrow(player_stats_1stServe),2),6])
+
+player_stats <- inner_join(player_stats_ServiceGamesWon,player_stats_1stServe, by=c("Joueur"))
+
+player_stats_1stServeWon <- read_html(URL_ATP_World_Tour_Stats_1stServePointsWon) %>%
+  html_nodes(xpath = '//*[@class="stats-listing-table"]') %>%
+  html_table(fill = TRUE) %>% data.frame()
+player_stats_1stServeWon <- data.frame(Joueur=player_stats_1stServeWon[seq(1,nrow(player_stats_1stServeWon),2),5],Pct1SW=player_stats_1stServeWon[seq(1,nrow(player_stats_1stServeWon),2),6])
+
+player_stats <- inner_join(player_stats,player_stats_1stServeWon, by=c("Joueur"))
+
+player_stats_2ndServeWon <- read_html(URL_ATP_World_Tour_Stats_2ndServePointsWon) %>%
+  html_nodes(xpath = '//*[@class="stats-listing-table"]') %>%
+  html_table(fill = TRUE) %>% data.frame()
+player_stats_2ndServeWon <- data.frame(Joueur=player_stats_2ndServeWon[seq(1,nrow(player_stats_2ndServeWon),2),5],Pct2SW=player_stats_2ndServeWon[seq(1,nrow(player_stats_2ndServeWon),2),6])
+
+player_stats <- inner_join(player_stats,player_stats_2ndServeWon, by=c("Joueur"))
+
+player_stats_BreakPointsSaved <- read_html(URL_ATP_World_Tour_Stats_BreakPointsSaved) %>%
+  html_nodes(xpath = '//*[@class="stats-listing-table"]') %>%
+  html_table(fill = TRUE) %>% data.frame()
+player_stats_BreakPointsSaved <- data.frame(Joueur=player_stats_BreakPointsSaved[seq(1,nrow(player_stats_BreakPointsSaved),2),5], PctBPS=player_stats_BreakPointsSaved[seq(1,nrow(player_stats_BreakPointsSaved),2),6])
+
+player_stats <- inner_join(player_stats,player_stats_BreakPointsSaved, by=c("Joueur"))
+
+player_stats_1stServeReturnPointsWon <- read_html(URL_ATP_World_Tour_Stats_1stServeReturnPointsWon) %>%
+  html_nodes(xpath = '//*[@class="stats-listing-table"]') %>%
+  html_table(fill = TRUE) %>% data.frame()
+player_stats_1stServeReturnPointsWon <- data.frame(Joueur=player_stats_1stServeReturnPointsWon[seq(1,nrow(player_stats_1stServeReturnPointsWon),2),5],P1SR=player_stats_1stServeReturnPointsWon[seq(1,nrow(player_stats_1stServeReturnPointsWon),2),6])
+
+player_stats <- inner_join(player_stats,player_stats_1stServeReturnPointsWon, by=c("Joueur"))
+
+player_stats_2ndServeReturnPointsWon <- read_html(URL_ATP_World_Tour_Stats_2ndServeReturnPointsWon) %>%
+  html_nodes(xpath = '//*[@class="stats-listing-table"]') %>%
+  html_table(fill = TRUE) %>% data.frame()
+player_stats_2ndServeReturnPointsWon <- data.frame(Joueur=player_stats_2ndServeReturnPointsWon[seq(1,nrow(player_stats_2ndServeReturnPointsWon),2),5],P2SR=player_stats_2ndServeReturnPointsWon[seq(1,nrow(player_stats_2ndServeReturnPointsWon),2),6])
+
+player_stats <- inner_join(player_stats,player_stats_2ndServeReturnPointsWon, by=c("Joueur"))
+
+player_stats$PctSW <- as.numeric(str_replace(player_stats$PctSW, "%", ""))/100
+player_stats$Pct1S <- as.numeric(str_replace(player_stats$Pct1S, "%", ""))/100
+player_stats$Pct1SW <- as.numeric(str_replace(player_stats$Pct1SW, "%", ""))/100
+player_stats$Pct2SW <- as.numeric(str_replace(player_stats$Pct2SW, "%", ""))/100
+player_stats$PctBPS <- as.numeric(str_replace(player_stats$PctBPS, "%", ""))/100
+player_stats$P1SR <- as.numeric(str_replace(player_stats$P1SR, "%", ""))/100
+player_stats$P2SR <- as.numeric(str_replace(player_stats$P2SR, "%", ""))/100
+
+#Saving for the app
+write_rds(player_stats, "player_stats.rds")
