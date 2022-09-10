@@ -27,6 +27,8 @@ ranking_atp_mois_2001_df$Date<- as.Date(ranking_atp_mois_2001_df$Date,origin="18
 
 player_stats_df <- readr::read_rds("player_stats.rds")
 
+ranking_atp_num1_df <- readr::read_rds("ranking_atp_num1.rds")
+
 current_date <- as.Date(max(tournament_atp_final_df$Debut),"%Y-%m-%d")
 
 app_ui <- function(request) {
@@ -70,12 +72,11 @@ app_ui <- function(request) {
                                                             selected = format(current_date, "%d %b %y"),
                                                             grid = FALSE,
                                                             animate=animationOptions(interval = 1000, loop = FALSE))
-                                            # mod_graphique_evolution_tournois_ui("graphique_evolution_tournois_1")
                               ),
-                              absolutePanel(id = "logo", class = "card", bottom = 40, left = 20, width = 30, fixed=TRUE, draggable = FALSE, height = "auto",
+                              absolutePanel(id = "logo", class = "card", bottom = 60, left = 20, width = 30, fixed=TRUE, draggable = FALSE, height = "auto",
                                             tags$a(href='https://github.com/Twan76/Projet_ATP/', tags$i(class = "fa fa-github", style = "font-size:40px; color: black;"))
                               ),
-                              absolutePanel(id = "logo", class = "card", bottom = 40, left = 80, width = 30, fixed=TRUE, draggable = FALSE, height = "auto",
+                              absolutePanel(id = "logo", class = "card", bottom = 60, left = 80, width = 30, fixed=TRUE, draggable = FALSE, height = "auto",
                                             tags$a(href='https://www.atptour.com/', tags$img(src='www/atp.png', height='40', width='35'))
                               )
                           )
@@ -110,31 +111,30 @@ app_ui <- function(request) {
                           mod_timeline_tournois_ui("timeline_tournois_1")
                  ),
                  tabPanel(title = "Similarités", icon = icon("person"),
-                          sidebarPanel(
-                            width = 4,
-                            pickerInput('Joueur', label = p("Les 3 joueurs ayant le style de jeu ressemblant le plus à :", style = "font-size:20px"),
-                                        choices = sort(unique(player_stats_df$Joueur)),
-                                        selected = "Rafael Nadal",
-                                        multiple = FALSE,
-                                        options = list(`live-search` = TRUE)
-                            ),
-                            hr(),
-                            p("La similarité entre les joueurs est déterminée en utilisant une technique de data mining,
-                            appelée la", a("méthode des plus proches voisins", href="https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm", target="_blank"), ".",style = "font-size:20px;"),
-                            hr(), hr(), hr(),   hr(), hr(), hr(),
-                            p("Définition des abbréviatitons :",style = "font-size:20px; font-weight: bold;"),
-                            p("PctSW : % de services gagnés",style = "font-size:20px;"),
-                            p("Pct1S : % de première balle au service",style = "font-size:20px;"),
-                            p("Pct1SW : % de points gagnés sur première balle",style = "font-size:20px;"),
-                            p("Pct2SW : % de points gagnés sur seconde balle",style = "font-size:20px;"),
-                            p("PctBPS : % de balles de breaks sauvées",style = "font-size:20px;"),
-                            p("P1SR : % de points gagnés sur première balle adverse",style = "font-size:20px;"),
-                            p("P2SR : % de points gagnés sur deuxième balle advserse",style = "font-size:20px;")
+                          column(4,
+                                 pickerInput('Joueur', label = p("Les 3 joueurs ayant le style de jeu ressemblant le plus à :", style = "font-size:20px"),
+                                             choices = sort(unique(player_stats_df$Joueur)),
+                                             selected = "Rafael Nadal",
+                                             multiple = FALSE,
+                                             inline = TRUE,
+                                             options = list(`live-search` = TRUE)
+                                 ),
+                                 hr(), h2(""),
+                                 p("La similarité entre les joueurs est déterminée en utilisant une technique de data mining,
+                                        appelée la", a("méthode des plus proches voisins", href="https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm", target="_blank"), ", à partir des statistiques suivantes.",style = "font-size:20px;"),
+                                 hr(), h2(""),
+                                 p("Définition des abbréviatitons :",style = "font-size:20px; font-weight: bold;"),
+                                 p("PctSW : % de services gagnés",style = "font-size:15px;"),
+                                 p("Pct1S : % de première balle au service",style = "font-size:15px;"),
+                                 p("Pct1SW : % de points gagnés sur première balle",style = "font-size:15px;"),
+                                 p("Pct2SW : % de points gagnés sur seconde balle",style = "font-size:15px;"),
+                                 p("PctBPS : % de balles de breaks sauvées",style = "font-size:15px;"),
+                                 p("P1SR : % de points gagnés sur première balle adverse",style = "font-size:15px;"),
+                                 p("P2SR : % de points gagnés sur deuxième balle advserse",style = "font-size:15px;")
                           ),
-                          mainPanel(
-                            width = 8,
-                            mod_radar_ui("radar_1")
-                            )
+                          column(8,
+                                 mod_radar_ui("radar_1")
+                          )
                  ),
                  tabPanel(title ="Evolution", icon = icon("chart-area"),
                           br(),
@@ -189,13 +189,16 @@ app_ui <- function(request) {
                  tabPanel(title ="Données", icon = icon("table"),
                           br(),
                           h4("Type de données"),
-                          radioButtons("details_donnees", label = "", inline = T, choices = list("Tournois joués" = 0, "Classement ATP" = 1), selected = 0),
+                          radioButtons("details_donnees", label = "", inline = T, choices = list("Tournois joués" = 0, "Classement ATP" = 1, "Numéros 1 mondiaux" = 2), selected = 0),
                           br(),
                           conditionalPanel(condition = "input.details_donnees == 0",
                                            mod_afficher_table_ui("afficher_table_1")
                           ),
                           conditionalPanel(condition = "input.details_donnees == 1",
                                            mod_afficher_table_ranking_ui("afficher_table_ranking_1")
+                          ),
+                          conditionalPanel(condition = "input.details_donnees == 2",
+                                           mod_afficher_table_num1_ui("afficher_table_num1_1")
                           )
                  )
       )

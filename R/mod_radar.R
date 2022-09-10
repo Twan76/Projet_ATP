@@ -13,9 +13,9 @@
 mod_radar_ui <- function(id){
   ns <- NS(id)
   tagList(
-    plotlyOutput(ns("radar"), width = 800, height=700),
-    p("Pour visualiser le graphique d'un joueur, cliquer sur le nom du joueur dans la légende du graphique",
-      style = "font-size:25px")
+    plotlyOutput(ns("radar"), width = 700, height=650),
+    p("Pour visualiser le graphique d'un joueur, cliquer sur le nom de celui-ci dans la légende.",
+      style = "font-size:20px")
   )
 }
 

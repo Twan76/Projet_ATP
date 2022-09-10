@@ -69,9 +69,8 @@ app_server <- function(input, output, session) {
   mod_graphique_evolution_tournois_server("graphique_evolution_tournois_1")
   mod_afficher_table_server("afficher_table_1")
   mod_afficher_table_ranking_server("afficher_table_ranking_1")
+  mod_afficher_table_num1_server("afficher_table_num1_1")
 
   # Google charts avec indexplayer, points et age, faire liaison couleur ? continent?
-  # radar
-  # ajouter classement à la race, classement jeunes..
   # https://shiny.rstudio.com/gallery/scotpho-profiles.html, trend en rajoutant des joueurs (evolution classement)
 }

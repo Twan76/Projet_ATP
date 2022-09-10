@@ -24,6 +24,7 @@ golem::add_module(name = "mapping_tournois", with_test = TRUE) # Name of the mod
 golem::add_module(name = "graphique_evolution_tournois", with_test = TRUE) # Name of the module
 golem::add_module(name = "afficher_table", with_test = TRUE) # Name of the module
 golem::add_module(name = "afficher_table_ranking", with_test = TRUE) # Name of the module
+golem::add_module(name = "afficher_table_num1", with_test = TRUE) # Name of the module
 golem::add_module(name = "barchart_race_ranking_2022", with_test = TRUE) # Name of the module
 golem::add_module(name = "barchart_race_ranking_2001", with_test = TRUE) # Name of the module
 golem::add_module(name = "timeline_tournois", with_test = TRUE) # Name of the module
