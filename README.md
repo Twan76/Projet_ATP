@@ -57,7 +57,7 @@ Le premier nous montre l'évolution du classement ATP 2022 à chaque actualisati
 
 ![Shiny app interface, barchart race](inst/app/www/images/barchart_race.png)
 
-- Enfin, le dernier pannel (Données) restitue les données brutes des tournois joués en 2022 sur le circuit ATP et challenger, le classement ATP 2022 à jour au complet (plus de 2000 joueurs) et un tableau historique des joueurs ayant été numéros uns mondiaux depuis la création de l'ATP (1972).
+- Enfin, le dernier panel (Données) restitue les données brutes des tournois joués en 2022 sur le circuit ATP et challenger, le classement ATP 2022 à jour au complet (plus de 2000 joueurs) et un tableau historique des joueurs ayant été numéros uns mondiaux depuis la création de l'ATP (1972).
 
 ![Shiny app interface, données](inst/app/www/images/tableaux.png)
 
