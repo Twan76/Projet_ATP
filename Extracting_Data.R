@@ -24,7 +24,7 @@ tournois_details <- function(x)  {
   names(tournois_details) <- c("Details", "Surface", "Vainqueur")
 
   # Recuperer categorie tournoi (250, 500, etc)
-  categorystamp <- read_html(x) %>% #Back to Wikipedia we go
+  categorystamp <- read_html(x) %>%
     html_nodes(xpath = '//*[@class="tourney-results-wrapper"]') %>%
     html_nodes("td > img") %>%
     html_attr("src") #Grab its URL location
@@ -129,7 +129,7 @@ tournament_atp <- function(x) {
   names(tournament_atp) <- c("Details", "Surface", "Vainqueur")
 
   # Recuperer categorie tournoi (250, 500, etc)
-  categorystamp <- read_html(x) %>% #Back to Wikipedia we go
+  categorystamp <- read_html(x) %>%
     html_nodes(xpath = '//*[@class="tourney-results-wrapper"]') %>%
     html_nodes("td > img") %>%
     html_attr("src") #Grab its URL location
@@ -192,7 +192,6 @@ tournament_atp <- function(x) {
   tournament_atp <- separate(tournament_atp, col="Details", into=c("Tournoi","Ville","Pays","Date"), sep=", ")
   tournament_atp <- separate(tournament_atp, col="Date", into=c("Debut","Fin"), sep=" - ")
 
-  #Now extracting the players' wiki pages so that I can look up their personal information (place of birth, height, playing position)
   player_links <- read_html(x) %>%
     html_nodes(xpath = '//*[@class="tourney-results-wrapper"]') %>%
     html_nodes("td > div > a") %>%

@@ -9,38 +9,41 @@
 #' @importFrom shiny NS tagList
 #' @importFrom tidyr gather
 #' @importFrom stringr str_replace_all
-#' @import tibble
-#' @import echarts4r
+#' @import ggplot2
 
 mod_graphique_evolution_tournois_ui <- function(id){
   ns <- NS(id)
   tagList(
-    echarts4rOutput(ns("tournois_surface"), height="300px", width="100%")
+    plotOutput(ns("tournois_surface"), height="300px", width="100%")
   )
 }
 
 #' graphique_evolution_tournois Server Functions
 #'
 #' @noRd
-mod_graphique_evolution_tournois_server <- function(id){
+mod_graphique_evolution_tournois_server <- function(id, r_global){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    output$tournois_surface <-renderEcharts4r({
-      # Construction table, nombre de tournois joué par surface
-      dataset <- data.frame(apply(table(tournament_atp_final_df$Debut,tournament_atp_final_df$Surface), 2, cumsum))
-      dataset <- rownames_to_column(dataset)
-      names(dataset)[1] <- "DateDebut"
+    output$tournois_surface <-renderPlot({
 
-      dataset |>
-        e_charts(DateDebut) |>
-        e_line(Dur.ext.,color="lightblue") |>
-        e_line(Dur.int.,color="purple") |>
-        e_line(Gazon, color="green") |>
-        e_line(TB.ext.,color="red") |>
-        e_line(TB.int.,color="orange") |>
-        e_title("Tournois par surface (ATP, Challenger), en cumulé") |>
-        e_legend(bottom=20)
+      if(length(unique(r_global$dataset()$Debut))>1){
+        # Construction table, nombre de tournois joué par surface
+        dataset <- data.frame(apply(table(r_global$dataset()$Debut,r_global$dataset()$Surface), 2, cumsum))
+        dataset$DateDebut <- as.Date(row.names(dataset))
+        dataset <- dataset %>%
+          gather(key = "Surface", value = "value", -DateDebut)
+        dataset$Surface <- str_replace_all(dataset$Surface,"TB.int.","TB int.")
+        dataset$Surface <- str_replace_all(dataset$Surface,"Dur.int.","Dur int.")
+        dataset$Surface <- str_replace_all(dataset$Surface,"TB.ext.","TB ext.")
+        dataset$Surface <- str_replace_all(dataset$Surface,"Dur.ext.","Dur ext.")
+        ggplot(dataset, aes(x = DateDebut, y = value)) +
+          geom_line(aes(color = Surface, linetype = Surface)) +
+          geom_point(aes(color = Surface), size=1) +
+          ylab("Nombre tournois") +  xlab("Date") + theme_bw() +
+          ggtitle("Nombre tournois par surface (cumulé)") +
+          theme(legend.title = element_blank(),     panel.border=element_blank(), legend.position = "bottom")
+      }
     })
 
   })

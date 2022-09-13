@@ -62,11 +62,11 @@ app_server <- function(input, output, session) {
 
   # Your application server logic
   mod_mapping_tournois_server("mapping_tournois_1", r_global = r_global)
+  mod_graphique_evolution_tournois_server("graphique_evolution_tournois_1", r_global = r_global)
   mod_timeline_tournois_server("timeline_tournois_1", r_global = r_global)
   mod_barchart_race_ranking_2022_server("barchart_race_ranking_2022_1",  r_global = r_global)
   mod_barchart_race_ranking_2001_server("barchart_race_ranking_2001_1", r_global = r_global)
   mod_radar_server("radar_1", r_global = r_global)
-  mod_graphique_evolution_tournois_server("graphique_evolution_tournois_1")
   mod_afficher_table_server("afficher_table_1")
   mod_afficher_table_ranking_server("afficher_table_ranking_1")
   mod_afficher_table_num1_server("afficher_table_num1_1")
