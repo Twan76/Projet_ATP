@@ -2,7 +2,7 @@
 
 ## A propos de l’application
 
-En recherche d’un nouveau challenge professionnellement, j’ai décidé de
+En recherche d’une nouvelle opportunité professionnellement, j’ai décidé de
 me challenger en souhaitant créer une application de visualisation de
 données sur le circuit de tennis ATP, sport qui est l’une de mes grandes
 passions. Pour réaliser ce projet, quoi de mieux que R-Shiny ??
@@ -28,7 +28,7 @@ télécharger R [ici](https://cran.r-project.org/) et l’IDE R Studio
 
 Toute les données ont été scrappées depuis le site officiel de
 l’[ATP](atptour.com). Elles contiennent les données des tournois du
-circuit principal (ATP), mais aussi secondaire (Challengers), mais aussi
+circuit principal (ATP), mais aussi secondaire (challenger), mais aussi
 les données/caractéristiques principales des joueurs. Notez que si
 l’architecture de ce site est amené à évoluer, le code présent dans le
 fichier “Extraction_Data.R” sera obselète.
@@ -36,7 +36,7 @@ fichier “Extraction_Data.R” sera obselète.
 ## Usage
 L'application est décomposée en 5 onglets :
 
-- Le premier panel (Cartographie) nous montre l'évolution des vainqueurs des tournois (ATP, challengers) à travers le temps. Vous pouvez filtrer par catégorie et surface. En passant la souris sur le logo (catégorie circuit), vous obtiendez des informations sur le tournoi. Si vous cliquez sur le logo du tournoi, vous apercevrez le vainqueur, ainsi que des caractéristiques basiques du joueur.
+- Le premier panel (Cartographie) nous montre l'évolution des vainqueurs des tournois (ATP, challenger) à travers le temps. Vous pouvez filtrer par catégorie et surface. En passant la souris sur le logo (catégorie circuit), vous obtiendez des informations sur le tournoi. Si vous cliquez sur le logo du tournoi, vous apercevrez le vainqueur, ainsi que des caractéristiques basiques du joueur.
 
 ![Shiny app interface, cartographie](inst/app/www/images/cartographie.png)
 
