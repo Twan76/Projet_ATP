@@ -2,7 +2,7 @@
 
 ## A propos de l’application
 
-En recherche d’une nouvelle opportunité professionnellement, j’ai décidé de
+En recherche d’une nouvelle opportunité professionnelle, j’ai décidé de
 me challenger en souhaitant créer une application de visualisation de
 données sur le circuit de tennis ATP, sport qui est l’une de mes grandes
 passions. Pour réaliser ce projet, quoi de mieux que R-Shiny ??

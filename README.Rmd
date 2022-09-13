@@ -8,7 +8,7 @@ output: github_document
 # Projet ATP
 
 ## A propos de l'application
-En recherche d'une nouvelle opportunité professionnellement, j'ai décidé de me challenger en souhaitant créer une application de visualisation de données sur le circuit de tennis ATP, sport qui est l'une de mes grandes passions. Pour réaliser ce projet, quoi de mieux que R-Shiny ??
+En recherche d'une nouvelle opportunité professionnelle, j'ai décidé de me challenger en souhaitant créer une application de visualisation de données sur le circuit de tennis ATP, sport qui est l'une de mes grandes passions. Pour réaliser ce projet, quoi de mieux que R-Shiny ??
 
 Le projet a donc été réalisé avec R, un célèbre langage de programmation gratuit/open-source, et reconnu dans l'utilisation de l'analyse de données, et plus particulièrement dans notre cas, pour la visualisation de données, à travers le package [shiny](https://shiny.rstudio.com/).
 
