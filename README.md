@@ -12,11 +12,15 @@ gratuit/open-source, et reconnu dans l’utilisation de l’analyse de
 données, et plus particulièrement dans notre cas, pour la visualisation
 de données, à travers le package [shiny](https://shiny.rstudio.com/).
 
-L’application est hébergée grauitement sur <http://www.shinyapps.io>.
+L’application est hébergée gratuitement sur <http://www.shinyapps.io>.
 Elle est malheureusement désactivée après 25h par mois d’usage. Si vous
 souhaitez lancer le code depuis votre ordinateur, vous pouvez
 télécharger R [ici](https://cran.r-project.org/) et l’IDE R Studio
 [ici](https://www.rstudio.com/products/rstudio/download/#download).
+
+Notez que vous devez avoir un compte Google Maps, pour avoir accès à l'API
+Google permettant de récupérer les latitudes et longitudes des villes des 
+tournois joués.
 
 ## Liens
 
