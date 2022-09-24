@@ -53,7 +53,7 @@ L'application est décomposée en 5 onglets :
 ![Shiny app interface, radar](inst/app/www/images/radar.png)
 
 - L'onglet suivant (Evolutions) est dédié au barchart race. Il est décomposé en 2.
-Le premier nous montre l'évolution du classement ATP 2022 à chaque actualisation du classement (tous les lundis excepté période de grand chelem), Le second nous produit l'évolution du classement ATP depuis 2001 à chaque début de mois. Pour chacun des 2 graphiques, vous pouvez décidez de garder l'ensemble des nationalités ou de n'en sélectionner qu'une seule. De cette manière, nous pouvons retrouver des anciennes gloires passées (exemple : évolution du TOP 25 francais depuis 2001 jusqu'à aujourd'hui).
+Le premier nous montre l'évolution du classement ATP 2022 à chaque actualisation du classement (tous les lundis excepté période de grand chelem). Le second nous produit l'évolution du classement ATP depuis 2001 à chaque début de mois. Pour chacun des 2 graphiques, vous pouvez décidez de garder l'ensemble des nationalités ou de n'en sélectionner qu'une seule. De cette manière, nous pouvons retrouver des anciennes gloires passées (exemple : évolution du TOP 25 francais depuis 2001 jusqu'à aujourd'hui).
 
 ![Shiny app interface, barchart race](inst/app/www/images/barchart_race.png)
 
